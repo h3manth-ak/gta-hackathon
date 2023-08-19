@@ -1,0 +1,74 @@
+.glass-effect {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+    font-size: 2.5rem;
+    line-height: 1.2;
+}
+
+.progress-ring {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: transparent;
+    border: 8px solid #f3f3f3;
+    position: relative;
+}
+
+.progress-circle {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background-color: transparent;
+    border: 8px solid var(--progress-color);
+    position: absolute;
+    clip: rect(0, 50px, 100px, 0);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes fill-progress {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(calc(360deg * var(--progress)));
+    }
+}
+
+.schedule-list {
+    max-height: 200px;
+    /* Adjust the max height as needed */
+    overflow-y: auto;
+    /* Add a scrollbar if content overflows */
+}
+
+.schedule-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.schedule-separator {
+    flex: 1;
+    height: 1px;
+    background-color: var(--random-color);
+    /* Use a variable to assign random color */
+    margin: 0 8px;
+}
