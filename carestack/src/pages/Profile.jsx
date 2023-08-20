@@ -42,6 +42,7 @@ const Profile = () => {
 
   // Function to check if a date has attendance
   const hasAttendance = (date) => attendanceData.includes(date);
+  const [userData, setUserData] = useState({});
 
   // Create an array of dates for the current month
   const currentDate = new Date();
@@ -52,6 +53,22 @@ const Profile = () => {
     { length: daysInMonth },
     (_, index) => new Date(currentYear, currentMonth, index + 1)
   );
+  const userId = localStorage.getItem('userId');
+  fetch("https://gta-xqet.onrender.com/users/me/", {
+    method: "GET",
+    headers: {
+      accept: "application/json",
+      Authorization: `bearer ${userId}`,
+    },
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log(data);
+        setUserData(data);
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+    });
 
   return (
     <div className="flex bg-gray-100 min-h-screen overflow-hidden">
@@ -115,22 +132,20 @@ const Profile = () => {
             </button>
             <div className="flex items-center space-x-4">
               {/* Notification Icon */}
-              <Link to={'/announcement'}>
-              
-              <button className="text-secondary">
-                <NotificationsIcon />
-              </button>
+              <Link to={"/announcement"}>
+                <button className="text-secondary">
+                  <NotificationsIcon />
+                </button>
               </Link>
 
               {/* Profile Image */}
               <div className="flex-shrink-0">
-                <Link to={'/profile'}>
-                
-                <img
-                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSSaQlO7ukqmBVlJd_ToyW9nDJXU8UCmpCjGYjhK79PIA&s"
-                  alt="Profile"
-                  className="h-8 w-8 rounded-full"
-                />
+                <Link to={"/profile"}>
+                  <img
+                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSSaQlO7ukqmBVlJd_ToyW9nDJXU8UCmpCjGYjhK79PIA&s"
+                    alt="Profile"
+                    className="h-8 w-8 rounded-full"
+                  />
                 </Link>
               </div>
             </div>
@@ -151,7 +166,7 @@ const Profile = () => {
 
                 {/* Details */}
                 <div className="flex flex-col justify-center ml-4">
-                  <h3 className="text-lg font-semibold">Employee Name</h3>
+                  <h3 className="text-lg font-semibold">{userData.name}</h3>
                   <div className="flex items-center mt-1">
                     <span
                       className="inline-block px-2 py-1 text-xs font-semibold rounded-full"
@@ -160,11 +175,10 @@ const Profile = () => {
                       Active
                     </span>
                   </div>
-                  <p className="mt-2">Role: Role Name</p>
-                  <p>Position: Position Name</p>
-                  <p>Email: email@example.com</p>
+                  <p className="mt-2">Role:  {userData.role}</p>
+                  <p>Email: {userData.email}</p>
                   <p>Phone: +123 456 7890</p>
-                  <p>Company: Company Name</p>
+                  <p>Company:Tesla</p>
                 </div>
               </div>
 
@@ -260,12 +274,11 @@ const Profile = () => {
           </section>
         </main>
         <div className="flex items-center justify-center">
-            <Link to={'/'}>
-            
-          <button className="bg-blue-500 text-white px-4 py-2 flex  rounded ">
-            Log out
-          </button>
-            </Link>
+          <Link to={"/"}>
+            <button className="bg-blue-500 text-white px-4 py-2 flex  rounded ">
+              Log out
+            </button>
+          </Link>
         </div>
       </div>
     </div>

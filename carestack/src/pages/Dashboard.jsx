@@ -59,9 +59,26 @@ const Dashboard = () => {
     { time: "04:30 PM", meeting: "Code Review" },
   ];
 
-  const randomSkillLevel = getRandomSkillLevel(); // Get a random skill level between 0 and 100
-  const progress = randomSkillLevel / 100; // Convert skill level to progress (0 to 1)
-  console.log(progress);
+
+  const [userData, setUserData] = useState({});
+  const userId = localStorage.getItem('userId');
+  fetch("https://gta-xqet.onrender.com/users/me/", {
+    method: "GET",
+    headers: {
+      accept: "application/json",
+      Authorization: `bearer ${userId}`,
+    },
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log(data);
+        setUserData(data);
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+    });
+
+
   return (
     <div className="flex bg-primary overflow-hidden " ref={ref}>
       {/* Sidebar */}
@@ -155,44 +172,20 @@ const Dashboard = () => {
                   </p>
                   <div className="flex items-center justify-center">
                     <p className="text-2xl font-semibold">
-                      {getRandomAttendance()}
+                      {userData.epoint}
                     </p>
                   </div>
                 </div>
 
                 <div>
-                  {/* <div className="progress-ring">
-                    <div
-                      className="progress-circle"
-                      style={{
-                        "--progress": `${progress * 100}%`,
-                        "--progress-color": "#F59E0B",
-                      }}
-                    >
-                      {inView ? (
-                      <CountUp start={0} end={randomSkillLevel} duration={1} />
-                    ) : null}
-                    %
-                    </div>
-                  </div> */}
-                  {/* <div className=" text-[34px] sm:text-[38px] font-tertiary text-custom-black mt-4">
-                    {inView ? (
-                      <CountUp start={0} end={85} duration={1} />
-                    ) : null}
-                    %
-                  </div>
-                  <div className="mb-12 mr-13">
-                    <p className="text-2xl font-semibold">
-                      {/* {getRandomAttendance()} */}
-                  {/* </p>
-                  </div>  */}
+                  
                   <div>
                     <h2 className="text-xl font-semibold mb-3">Skill Level</h2>
 
                     <div className="flex items-center ">
                       <div
                         className={`text-base sm:text-[38px]  font-tertiary ${
-                          randomSkillLevel > 50
+                          userData.skillp > 50
                             ? "text-green-500"
                             : "text-red-500"
                         }  sm:mt-4`}
@@ -200,7 +193,7 @@ const Dashboard = () => {
                         {inView ? (
                           <CountUp
                             start={0}
-                            end={randomSkillLevel}
+                            end={userData.skillp}
                             duration={1}
                           />
                         ) : null}
@@ -265,10 +258,6 @@ const Dashboard = () => {
 
 export default Dashboard;
 
-function getRandomAttendance() {
-  return Math.floor(Math.random() * 10) + 1; // Random number between 1 and 30
-}
 
-function getRandomSkillLevel() {
-  return Math.floor(Math.random() * 101); // Random number between 0 and 100
-}
+
+

@@ -9,10 +9,30 @@ import { Link } from "react-router-dom";
 
 const User = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-
+  const [name, setName] = useState("");
+  const [skillLevel, setSkillLevel] = useState("");
+  const userId = localStorage.getItem('userId');
   const handleSidebarToggle = () => {
     setSidebarOpen(!sidebarOpen);
   };
+
+  fetch("https://gta-xqet.onrender.com/users/me/", {
+    method: "GET",
+    headers: {
+      accept: "application/json",
+      Authorization:
+      `bearer ${userId}`,
+    },
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      setName(data.name);
+      setSkillLevel(data.skillp);
+      console.log(data);
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+    });
 
   return (
     <div className="flex bg-primary overflow-hidden ">
@@ -76,22 +96,20 @@ const User = () => {
             </button>
             <div className="flex items-center space-x-4">
               {/* Notification Icon */}
-              <Link to={'/announcement'}>
-              
-              <button className="text-secondary">
-                <NotificationsIcon />
-              </button>
+              <Link to={"/announcement"}>
+                <button className="text-secondary">
+                  <NotificationsIcon />
+                </button>
               </Link>
 
               {/* Profile Image */}
               <div className="flex-shrink-0">
-                <Link to={'/profile'}>
-                
-                <img
-                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSSaQlO7ukqmBVlJd_ToyW9nDJXU8UCmpCjGYjhK79PIA&s"
-                  alt="Profile"
-                  className="h-8 w-8 rounded-full"
-                />
+                <Link to={"/profile"}>
+                  <img
+                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSSaQlO7ukqmBVlJd_ToyW9nDJXU8UCmpCjGYjhK79PIA&s"
+                    alt="Profile"
+                    className="h-8 w-8 rounded-full"
+                  />
                 </Link>
               </div>
             </div>
@@ -99,15 +117,18 @@ const User = () => {
         </nav>
 
         <main
-          className="bg-primary min-h-screen overflow-y-auto scroll-ms-0 bg-cover bg-center  "
+          className="bg-primary min-h-screen overflow-y-auto scroll-ms-0 bg-cover bg-center bg-blu  "
           style={{
             backgroundImage:
               "url(https://source.unsplash.com/E8Ufcyxz514/2400x1823)",
           }}
         >
-          <h1 className="text-5xl flex justify-center   backdrop:blur-lg items-center ml-24 mt-28 font-bold mb-4">
-            Welcome<strong> User</strong> 🙌
+          <h1 className="text-5xl flex justify-center   backdrop:blur-lg items-center  mt-28 font-bold ">
+            Welcome {name}
           </h1>
+          <h3 className="flex text-lg  justify-center items-center">
+            software engineer
+          </h3>
 
           <div className=" flex justify-evenly items-center h-full mt-10 pt-10 gap-10 ">
             {/* Log Card */}
@@ -128,7 +149,7 @@ const User = () => {
             <div className="bg-white rounded-lg shadow-md p-6 min-w-[250px] border border-gray-300 h-[300px] flex flex-col justify-center">
               <div className="flex items-center justify-center">
                 <div className="w-16 h-16 rounded-full bg-blue-500 flex justify-center items-center text-white text-2xl font-semibold">
-                  65%
+                  {skillLevel}%
                 </div>
               </div>
               <div className="mt-4 text-center">

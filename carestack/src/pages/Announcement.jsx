@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 import { Card, CardContent, Typography, Button } from "@mui/material";
@@ -7,23 +7,75 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 
 const Announcement = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-
+  const [generalInstructions, setGeneralInstructions] = useState([]);
+  const [jobData, setJobData] = useState([]);
+  const userId = localStorage.getItem("userId");
+  const [skillLevel, setSkillLevel] = useState("");
+  const [jobName, setJobName] = useState("");
+  const [jobDescription, setJobDescription] = useState("");
+  const [jobDeadline, setJobDeadline] = useState("");
   const handleSidebarToggle = () => {
     setSidebarOpen(!sidebarOpen);
   };
-  const generalInstructions = [
-    {
-      heading: "Team Meeting",
-      description:
-        "There will be a team meeting tomorrow at 10 AM to discuss project updates.",
-    },
-    {
-      heading: "Annual Leave",
-      description:
-        "Annual leave application is now open. Please submit your leave requests by the end of this week.",
-    },
-    // Add more general instructions here
-  ];
+
+  const handleComplete = () => {
+    console.log("clicked");
+    fetch("https://gta-xqet.onrender.com/admin_confirm", {
+      method: "PUT",
+      headers: {
+        accept: "application/json",
+        Authorization: `bearer ${userId}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  };
+
+  useEffect(() => {
+    fetch("https://gta-xqet.onrender.com/show_anounce", {
+      method: "GET",
+      headers: {
+        accept: "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        const formattedData = data.map((item) => ({
+          heading: item.tittle,
+          description: item.desc,
+        }));
+        setGeneralInstructions(formattedData);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  }, []);
+
+  useEffect(() => {
+    fetch("https://gta-xqet.onrender.com/show_currentuser_jobs", {
+      method: "GET",
+      headers: {
+        accept: "application/json",
+        Authorization: `bearer ${userId}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        setJobName(data.jname);
+        setJobDescription(data.discription);
+        setJobDeadline(data.deadline);
+        setSkillLevel(data.skill);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  }, []);
 
   const jobAssignments = [
     {
@@ -37,6 +89,7 @@ const Announcement = () => {
     // Add more job assignments here
   ];
 
+  console.log(jobData);
   return (
     <div className="flex bg-gray-100 min-h-screen overflow-hidden ">
       {/* Sidebar */}
@@ -99,22 +152,20 @@ const Announcement = () => {
             </button>
             <div className="flex items-center space-x-4">
               {/* Notification Icon */}
-              <Link to={'/announcement'}>
-              
-              <button className="text-secondary">
-                <NotificationsIcon />
-              </button>
+              <Link to={"/announcement"}>
+                <button className="text-secondary">
+                  <NotificationsIcon />
+                </button>
               </Link>
 
               {/* Profile Image */}
               <div className="flex-shrink-0">
-                <Link to={'/profile'}>
-                
-                <img
-                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSSaQlO7ukqmBVlJd_ToyW9nDJXU8UCmpCjGYjhK79PIA&s"
-                  alt="Profile"
-                  className="h-8 w-8 rounded-full"
-                />
+                <Link to={"/profile"}>
+                  <img
+                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSSaQlO7ukqmBVlJd_ToyW9nDJXU8UCmpCjGYjhK79PIA&s"
+                    alt="Profile"
+                    className="h-8 w-8 rounded-full"
+                  />
                 </Link>
               </div>
             </div>
@@ -137,35 +188,37 @@ const Announcement = () => {
           ))}
 
           <h2 className="text-xl font-semibold mb-4">Job Assignments</h2>
-          {jobAssignments.map((assignment, index) => (
-            <Card key={index} className="mb-4">
+          {
+            <Card  className="mb-4">
               <CardContent>
                 <Typography variant="h6" component="h2" className="mb-2">
-                  {assignment.heading}
+                  {jobName}
                 </Typography>
                 <Typography color="textSecondary">
-                  {assignment.description}
+                  {jobDescription}
                 </Typography>
                 <Typography color="textSecondary">
-                  {assignment.deadline}
+                  {jobDeadline}
                 </Typography>
                 <Typography color="textSecondary">
-                  {assignment.stack}
-                </Typography>
-                <Typography color="textSecondary">
-                  {assignment.overview}
+                  {skillLevel}
+
                 </Typography>
                 <div className="mt-4 flex gap-4">
-                  <Button variant="contained" color="success" className="mr-2">
-                    Accept
-                  </Button>
-                  <Button variant="contained" color="error">
-                    Reject
+                  <Button
+                    onClick={() => {
+                      handleComplete();
+                    }}
+                    variant="contained"
+                    color="primary"
+                    className="mr-2"
+                  >
+                    completed..?
                   </Button>
                 </div>
               </CardContent>
             </Card>
-          ))}
+          }
         </div>
       </div>
     </div>
